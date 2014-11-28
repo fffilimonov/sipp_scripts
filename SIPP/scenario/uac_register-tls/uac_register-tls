@@ -1,0 +1,34 @@
+#!/bin/bash
+
+remote_ip=1.1.1.1;
+
+remote_port=5070;
+local_ip=`hostname -I`;
+#local_ip=192.168.33.60;
+local_port=5070;
+
+SIPP="./../../sipp.sh";
+me=`basename $0`;
+logs="logs/";
+mylogs=$logs$me;
+mkdir ../../$mylogs;
+mypath="scenario/$me";
+
+mkdir $mylogs 2>/dev/null;
+ERRLOG="$mylogs/err.log";
+SIPLOG="$mylogs/message.log";
+
+>$ERRLOG;
+>$SIPLOG;
+
+$SIPP\
+    -sf $mypath/uac_register.xml\
+    -inf $mypath/register.csv\
+    -trace_err -error_file $ERRLOG\
+    -trace_msg -message_file $SIPLOG\
+    -r 1\
+    -m 1\
+    -t ln\
+    -i $local_ip\
+    -p $local_port\
+    $remote_ip:$remote_port

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+remote_ip=1.1.1.1;
+remote_port=5070;
+#local_ip="212.212.212.212";
+local_ip=`hostname -I`;
+#local_ip=192.168.33.60;
+local_port=5070;
+
+SIPP="./../../sipp";
+me=`basename $0`;
+logs="../../logs/";
+mylogs=$logs$me;
+
+mkdir $mylogs 2>/dev/null;
+ERRLOG="$mylogs/err.log";
+SIPLOG="$mylogs/message.log";
+
+>$ERRLOG;
+>$SIPLOG;
+
+$SIPP\
+    -sf uac_register.xml\
+    -inf register.csv\
+    -trace_err -error_file $ERRLOG\
+    -trace_msg -message_file $SIPLOG\
+    -watchdog_minor_threshold 1000\
+    -watchdog_major_threshold 3500\
+    -watchdog_reset 1\
+    -r 20\
+    -m 1000000\
+    -l 20\
+    -t ln\
+    -i $local_ip\
+    -p $local_port\
+    $remote_ip:$remote_port
